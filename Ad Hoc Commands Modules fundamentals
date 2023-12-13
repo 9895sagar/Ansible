@@ -1,0 +1,110 @@
+General syntex for  Ad Hoc Command
+--- ansible host-pattern -m module [-a 'module arguments'] [-i inventory]
+
+Command uses Ansible to ping all hosts, dev, web defined in your inventory file. The -m flag specifies the Ansible module to use.
+--- ansible all -m ping
+--- ansible dev -m ping
+--- ansible web -m ping
+
+Command uses Ansible to ping all hosts, dev, web defined in your inventory file with nornal, more and very verbose, . The -m flag specifies the Ansible module to use.
+--- ansible all -m ping -v
+--- ansible dev -m ping -vv
+--- ansible web -m ping -vvv
+
+To add new Linux user
+--- ansible dev -m user -a 'name=test_user uid=2000 state=present'
+
+If ansible has previously made some change, if the same command is executed again, there will be no change i.e changed : false
+--- ansible dev -m user -a 'name=test_user uid=2000 state=present'
+
+To remove new Linux user
+--- ansible dev -m user -a 'name=test_user uid=2000 state=remove'
+
+If we change the ./ansible.cfg file and comment the privilege_escalation, the above command will not allow ec2-user to run sudo operations.
+The following modules are useful:
+copy (copy a local file to the managed host)
+get_url (download a file to the managed host)
+file (set permissions and other properties of a file)
+synchronize (to synchronize content like rsync)
+lineinfile (make sure a certain line is or isn't in a file)
+Software package management modules, such as yum, apt, pip and so on
+System administration tools, such as
+service to control daemons
+user module to add, remove and configure users
+uri, which interacts with a web server and can test functionality or issue API requests
+
+Command Module
+1. In Ansible, the command module is used to run arbitrary commands on target hosts. 
+--- ansible <target_host_or_group> -m command -a "<your_command>"
+
+2. Run a simple command on all hosts
+--- ansible all -m command -a "ls -l /"
+
+3. Run a command on a specific host
+--- ansible specific_host -m command -a "uptime"
+
+4. Run a command with sudo on a group of hosts
+--- ansible group_of_hosts -m command -a "sudo yum update -y"
+
+5. Operations requiring elevated privileges (such as using sudo), you may need to specify the -b (become) option to run the command with elevated privileges
+--- ansible group_of_hosts -m command -a "sudo yum update -y" -b
+
+Shell Module
+1. The shell module in Ansible is used to execute shell commands on target hosts
+--- ansible <target_host_or_group> -m shell -a "<your_command>"
+
+2. Run a simple command on all hosts
+--- ansible all -m shell -a "ls -l /"
+
+3. Run a command on a specific host
+--- ansible specific_host -m shell -a "uptime"
+
+4. Run a command with sudo on a group of hosts
+--- ansible group_of_hosts -m shell -a "sudo yum update -y"
+
+5. Remember that for operations requiring elevated privileges (such as using sudo), you may need to specify the -b (become) option to run the command with elevated privileges.
+--- ansible group_of_hosts -m shell -a "sudo yum update -y" -b
+
+File Module
+1. Create a Directory
+--- ansible <target_host_or_group> -m file -a "path=/path/to/directory state=directory"
+
+2. Create an Empty File
+--- ansible <target_host_or_group> -m file -a "path=/path/to/file state=file touch=yes"
+
+3. Change File Permissions
+--- ansible <target_host_or_group> -m file -a "path=/path/to/file mode=0644"
+
+4. Remove a File
+--- ansible <target_host_or_group> -m file -a "path=/path/to/file state=absent"
+
+5. Remove a Directory and Its Contents
+--- ansible <target_host_or_group> -m file -a "path=/path/to/directory state=absent"
+
+Copy Module
+1. Copy a File to a Remote Host
+--- ansible <target_host_or_group> -m copy -a "src=/path/to/local/file dest=/path/on/remote/machine"
+
+2. Copy a Directory to a Remote Host
+--- ansible <target_host_or_group> -m copy -a "src=/path/to/local/directory dest=/path/on/remote/machine/ mode=recursive"
+
+3. Copy a File and Set Ownership and Permissions
+--- ansible <target_host_or_group> -m copy -a "src=/path/to/local/file dest=/path/on/remote/machine owner=user group=group mode=0644"
+
+Serup Module
+1. How you can explicitly run the setup module using an ad-hoc command
+--- ansible <target_host_or_group> -m setup
+
+2. Keep in mind that the setup module gathers a wide range of information, and the output can be quite extensive. If you want to filter the information, you can use the --limit option to target a specific host or group.
+--- ansible <target_host_or_group> -m setup --limit <target_host_or_group>
+
+3. Gather facts
+--- ansible all -m setup
+
+4. Filter facts
+--- ansible all -m setup -a 'filter=ansible_hostname'
+--- ansible all -m setup -a 'filter=ansible_fqdn'
+--- ansible all -m setup -a 'filter=ansible_pkg_mgr'
+--- ansible all -m setup -a 'filter=ansible_os_family'
+--- ansible all -m setup -a 'filter=ansible_eth0'
+--- ansible all -m setup -a 'filter=ansible_distribution'
