@@ -1,0 +1,73 @@
+To change the host name of the servers
+--- sudo hostnamectl set-hostname control-node.example.com
+--- sudo hostnamectl set-hostname managed-node-01.example.com 
+--- sudo hostnamectl set-hostname managed-node-02.example.com
+--- bash
+
+How to ping manage mode by using control mode
+--- [ec2-user@control-node ssm-user]$ ping managed-node-01.example.com 
+Output of ping command
+ping: managed-node-01.example.com: Name or service not known
+Provide the private IP of the servers in /etc/hosts  file
+
+To install ansible on linux control node
+--- sudo yum update
+--- sudo yum install python3
+--- sudo amazon-linux-extras install epel
+--- sudo yum install -y Ansible
+
+How to create folder or directory and go inside that directory
+--- mkdir ansible-demo && cd ansible-demo
+
+To create inventory file and pasting or writing the inventory file code
+--- touch inventory
+--- vi inventory
+------------------------------------------------------------------------------------------------------------------------------
+[myhost] 
+localhost ansible_connection=local 
+[dev] 
+managed-node-01.example.com hostVariableName=hostVariableValue 
+ansible_connection=ssh 
+[web] 
+managed-node-02.example.com
+ [centos] 
+managed-node-03.example.com ansible_user=centos 
+[myhost:vars] u
+sername=myusername 
+password=mypassword
+------------------------------------------------------------------------------------------------------------------------------
+
+To view all the list of host from inventory file
+--- ansible -i inventory all --list-hosts 
+--- ansible -i inventory dev --list-hosts -v 
+--- ansible –version
+
+Where the Ansible.config file are present
+1.	ANSIBLE_CONFIG (environment variable if set) 
+2.	ansible.cfg (in the current directory) 
+3.	~/.ansible.cfg in the home directory as a hidden file) 
+4.	/etc/ansible/ansible.cfg
+
+How to set an unset the Ansible config
+--- export ANSIBLE_CONFIG="" 
+--- unset ANSIBLE_CONFIG
+
+what is the actual content of ansible.config file
+[defaults]
+ interpreter_python=/usr/bin/python3 
+inventory = ./inventory 
+remote_user = ec2-user
+ ask_pass = false 
+private_key_file=/path/to/file.pem 
+host_key_checking = False 
+[privilege_escalation] 
+become = true 
+become_method = sudo 
+become_user = root
+ become_ask_pass = false
+
+Check details of the config file using below command from different directories:
+--- ansible  --version
+
+Verify sections inside a ansible.cfg file
+--- grep "^\[" /etc/ansible/ansible.cfg
