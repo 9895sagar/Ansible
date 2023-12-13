@@ -1,0 +1,32 @@
+A playbook is a text file that contains a list of one or more plays to run in order.
+---- Playbook contains Plays
+---- Plays contains tasks
+---- Task runs modules.
+
+Ansible playbook creation
+--- vi playbook.yml
+
+Ansible Playbook execution
+--- ansible-playbook playbook.yml
+
+Syntax Verification
+--- ansible-playbook --syntax-check main.yml
+
+Executing a Dry Run
+--- ansible-playbook 1b_dry_run.yml --check
+
+To view more magic variables that are associated with a particular hosts
+--- ansible localhost -m debug -a 'var=hostvars[inventory_hostname]'
+
+Change the hostname of this centos machine and add it in the host variable
+--- sudo hostnamectl set-hostname managed-node-03.example.com
+
+Try ping module on newly launched any node.
+--- ansible centos -m ping
+--- ansible centos -m user -a 'name=new_user uid=4000 state=present'
+
+Find the modules for any tasks
+--- ansible-doc yum
+
+
+
